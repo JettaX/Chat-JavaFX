@@ -1,0 +1,16 @@
+.button {
+    -fx-pref-height: 60px;
+}
+
+.VBox {
+    -fx-pref-height: 60px;
+}
+
+#searchInput {
+    -fx-pref-height: 50px;
+}
+
+.chatButtonWithFriend, .chatButtonWithUser {
+    -fx-background-color: rgb(29, 29, 29);
+    -fx-max-width: infinity;
+}

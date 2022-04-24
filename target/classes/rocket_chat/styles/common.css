@@ -1,0 +1,88 @@
+.root {
+    -fx-font-family: 'Open Sans', sans-serif;
+    -fx-font-size: 16px;
+    -fx-text-fill: White;
+    -fx-background-color: rgb(29, 29, 29);
+}
+
+.scroll-pane {
+    -fx-background-color: rgb(29, 29, 29);
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: as-needed;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+}
+
+.scroll-bar:horizontal, .scroll-bar:vertical {
+    -fx-background-color: rgb(29, 29, 29);
+}
+
+.increment-button, .decrement-button {
+    -fx-background-color: rgb(29, 29, 29);
+    -fx-border-color: rgb(29, 29, 29);
+}
+
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track {
+    -fx-background-color: rgb(29, 29, 29);
+    -fx-border-color: rgb(29, 29, 29);
+    -fx-background-radius: 0;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color: rgb(45, 45, 45);
+    -fx-background-radius: 5px;
+}
+
+.label {
+    -fx-font-family: 'Open Sans', sans-serif;
+    -fx-font-size: 16px;
+    -fx-text-fill: White;
+}
+
+.button {
+    -fx-font-family: 'Open Sans', sans-serif;
+    -fx-font-size: 16px;
+    -fx-text-fill: White;
+    -fx-background-color: rgb(45, 45, 45);
+    -fx-pref-width: 100px;
+    -fx-pref-height: 50px;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: rgb(61, 61, 61);
+}
+
+.button:pressed {
+    -fx-background-color: rgb(77, 77, 77);
+}
+
+.button-mark {
+    -fx-background-color: rgb(171, 51, 52);
+}
+
+.text-field, .text-field:disabled {
+    -fx-font-family: 'Open Sans', sans-serif;
+    -fx-font-size: 16px;
+    -fx-text-fill: White;
+    -fx-prompt-text-fill: Gray;
+    -fx-background-color: rgb(45, 45, 45);
+    -fx-pref-height: 50px;
+}
+
+.text-area {
+    -fx-font-family: 'Open Sans', sans-serif;
+    -fx-font-size: 16px;
+    -fx-text-fill: White;
+    -fx-highlight-fill: Gray;
+    -fx-background-color: rgb(45, 45, 45);
+    -fx-control-inner-background: rgb(45, 45, 45);
+}

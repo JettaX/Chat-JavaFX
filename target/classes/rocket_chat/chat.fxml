@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" style="-fx-background-color: #1D1D1D;"
+      stylesheets="@styles/common.css, @styles/chat.css" xmlns="http://javafx.com/javafx/11.0.14-internal"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="rocket_chat.ChatController" onMouseClicked="#mouseListener">
+	<HBox fx:id="titleWrapper" HBox.hgrow="ALWAYS"/>
+	<ScrollPane fx:id="scrollPaneForMessages" cache="true" cacheHint="SPEED" fitToWidth="true" HBox.hgrow="ALWAYS"
+	            VBox.vgrow="ALWAYS">
+		<VBox fx:id="messagesWrapper"/>
+	</ScrollPane>
+	<HBox styleClass="inputsWrapper">
+		<TextField fx:id="inputField" onKeyPressed="#keyListener" promptText="write message..." HBox.hgrow="ALWAYS"/>
+		<Button fx:id="sendButton" onAction="#sendMessageListener" styleClass="button-mark" text="Send"/>
+	</HBox>
+</VBox>

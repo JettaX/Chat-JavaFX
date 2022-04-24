@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      styleClass="root"
+      fx:controller="rocket_chat.ErrorController"
+      alignment="CENTER"
+      spacing="20"
+      stylesheets="@styles/common.css">
+
+	<Label fx:id="errorLabel" text="Error"/>
+	<Button fx:id="okButton"
+	        text="Back"
+	        onAction="#handleOkButton"/>
+</VBox>
