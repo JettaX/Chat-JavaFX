@@ -3,6 +3,7 @@ package rocket_chat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
+import lombok.extern.slf4j.Slf4j;
 import rocket_chat.entity.Chat;
 import rocket_chat.entity.Message;
 import rocket_chat.network.TCPConnection;
@@ -12,19 +13,17 @@ import rocket_chat.repository.*;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+@Slf4j
 public class TcpListener implements TCPConnectionListener {
-    private Logger logger = Logger.getLogger(TcpListener.class.getName());
-    private Connection connection;
+    private TcpConnection tcpConnection;
     private ChatRepository chatRepository;
     private UserRepository userRepository;
 
     public TcpListener() {
-        connection = new Connection();
-        chatRepository = new ChatRepositoryInMemory();
-        userRepository = new UserRepositoryInMemory();
+        tcpConnection = new TcpConnection();
+        chatRepository = new ChatRepositoryJPA();
+        userRepository = new UserRepositoryJPA();
         createConnections();
     }
 
@@ -38,15 +37,15 @@ public class TcpListener implements TCPConnectionListener {
         try {
             mess = new ObjectMapper().readerFor(Message.class).readValue(message);
         } catch (JsonProcessingException e) {
-            logger.log(Level.WARNING, "Error while parsing message", e);
+            log.warn("Error while parsing message", e);
         }
-        if (Main.chatController != null && Main.chatController.getChat().getFriendUser().getUserLogin().equals(Objects.requireNonNull(mess).getUserNameFrom())) {
+        if (Main.chatController != null && Main.chatController.getChat().getFriendUser().getUserName().equals(Objects.requireNonNull(mess).getUserFrom().getUserName())) {
             Message finalMess = mess;
             Platform.runLater(() -> Main.chatController.addMessage(finalMess, false));
         } else {
-            if (!chatRepository.chatExists(mess.getUserNameTo(), mess.getUserNameFrom())) {
-                chatRepository.saveChat(new Chat(userRepository.getUserById(mess.getUserNameTo()),
-                        userRepository.getUserById(mess.getUserNameFrom())));
+            if (!chatRepository.chatExists(mess.getUserTo().getUserName(), mess.getUserFrom().getUserName())) {
+                chatRepository.saveChat(new Chat(userRepository.getUserById(mess.getUserTo().getUserName()),
+                        userRepository.getUserById(mess.getUserFrom().getUserName())));
             }
             chatRepository.addMessage(mess);
         }
@@ -55,14 +54,14 @@ public class TcpListener implements TCPConnectionListener {
     @Override
     public void onDisconnect(TCPConnection tcpConnection, String login) {
         tcpConnection.disconnect();
-        connection.remove();
+        this.tcpConnection.remove();
     }
 
     @Override
     public void onException(TCPConnection tcpConnection, Exception e) {
-        logger.log(Level.WARNING, "Exception");
+        log.warn(e.getMessage());
         tcpConnection.disconnect();
-        connection.remove();
+        this.tcpConnection.remove();
         Main.isServerConnected = false;
     }
 
@@ -79,9 +78,9 @@ public class TcpListener implements TCPConnectionListener {
                     throw new IOException("Login is null");
                 }
                 Main.isServerConnected = true;
-                Main.showChats(userRepository.getUserByUserLogin(login));
+                Main.showChats(userRepository.getUserById(login));
             } catch (IOException e) {
-                logger.log(Level.WARNING, "Error while getting user");
+                log.warn("Error while getting user");
             }
         });
     }
@@ -103,20 +102,20 @@ public class TcpListener implements TCPConnectionListener {
 
     private void createConnections() {
         try {
-            connection.addIfNotExists(this);
+            tcpConnection.addIfNotExists(this);
         } catch (ConnectException e) {
             Main.isServerConnected = false;
         } catch (IOException e) {
-            logger.log(Level.WARNING, "Error");
+            log.warn("Error");
         }
     }
 
-    private void showError (String message) {
+    private void showError(String message) {
         Platform.runLater(() -> {
             try {
                 Main.showError(message);
             } catch (IOException e) {
-                logger.log(Level.WARNING, e.getMessage());
+                log.warn(e.getMessage());
             }
         });
     }

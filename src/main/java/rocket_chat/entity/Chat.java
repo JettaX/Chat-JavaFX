@@ -1,34 +1,41 @@
 package rocket_chat.entity;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@JsonPropertyOrder({"ownerUser", "friendUser", "messages"})
-@AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@Entity
+@Table(name = "chats")
 public class Chat {
-    @Getter
-    private String id;
-    @Getter
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
+    private Long id;
+    @ManyToOne
+    @JoinColumn(name = "owner_user_id")
     private User ownerUser;
-    @Getter
+    @ManyToOne
+    @JoinColumn(name = "friend_user_id")
     private User friendUser;
-    @Getter
+    @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Message> messages = new ArrayList<>();
 
     public Chat(User ownerUser, User friendUser) {
         this.ownerUser = ownerUser;
         this.friendUser = friendUser;
     }
-
     public void addMessage(Message message) {
         messages.add(message);
+        message.setChat(this);
     }
 
     @Override

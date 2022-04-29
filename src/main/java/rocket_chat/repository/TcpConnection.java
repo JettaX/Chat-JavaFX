@@ -5,7 +5,7 @@ import rocket_chat.network.TCPConnectionListener;
 
 import java.io.IOException;
 
-public class Connection {
+public class TcpConnection {
     private static TCPConnection connection = null;
 
     public void addIfNotExists(TCPConnectionListener listener) throws IOException {

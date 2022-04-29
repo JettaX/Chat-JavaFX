@@ -10,32 +10,32 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<junit.version>5.8.1</junit.version>
+		<junit.version>5.8.2</junit.version>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
 
 	<dependencies>
+		<!--Features-->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.22</version>
 		</dependency>
+
+		<!--UI-->
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-controls</artifactId>
-			<version>17.0.1</version>
+			<version>18</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-fxml</artifactId>
-			<version>17.0.1</version>
+			<version>18</version>
 		</dependency>
-		<dependency>
-			<groupId>org.kordamp.bootstrapfx</groupId>
-			<artifactId>bootstrapfx-core</artifactId>
-			<version>0.4.0</version>
-		</dependency>
+
+		<!--Test-->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
@@ -48,15 +48,51 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!--JSon-->
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
-			<version>2.13.1</version>
+			<version>2.13.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.13.2</version>
+			<version>2.13.2.2</version>
+		</dependency>
+
+		<!--logging-->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.36</version>
+			<scope>runtime</scope>
+		</dependency>
+
+
+		<!--Data-->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>6.0.0.Final</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.orm</groupId>
+			<artifactId>hibernate-community-dialects</artifactId>
+			<version>6.0.0.Final</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.3.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.36</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 

@@ -15,16 +15,7 @@ public class UserRepositoryInMemory implements UserRepository {
 
     public User getUserById(String userName) {
         for (User user : list) {
-            if (user.getUserLogin().equals(userName)) {
-                return user;
-            }
-        }
-        return null;
-    }
-
-    public User getUserByUserLogin(String userLogin) {
-        for (User user : list) {
-            if (user.getUserLogin().toLowerCase().equals(userLogin.toLowerCase())) {
+            if (user.getUserName().equals(userName)) {
                 return user;
             }
         }
@@ -36,6 +27,6 @@ public class UserRepositoryInMemory implements UserRepository {
     }
 
     public void deleteUserById(String userName) {
-        list.removeIf(user -> user.getUserLogin().equals(userName));
+        list.removeIf(user -> user.getUserName().equals(userName));
     }
 }

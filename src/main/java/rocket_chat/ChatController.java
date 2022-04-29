@@ -14,26 +14,25 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import rocket_chat.entity.Chat;
 import rocket_chat.entity.Message;
 import rocket_chat.repository.ChatRepository;
-import rocket_chat.repository.ChatRepositoryInMemory;
-import rocket_chat.repository.Connection;
+import rocket_chat.repository.ChatRepositoryJPA;
+import rocket_chat.repository.TcpConnection;
 import rocket_chat.validation.Validator;
 import rocket_chat.view.LabelMessageNotSent;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+@Slf4j
 public class ChatController {
     private ChatRepository chatRepository;
     private Validator validator;
     @Getter
     private Chat chat;
-    private Logger logger = Logger.getLogger(ChatController.class.getName());
-    private Connection connection;
+    private TcpConnection tcpConnection;
 
     @FXML
     public ScrollPane scrollPaneForMessages;
@@ -48,9 +47,9 @@ public class ChatController {
 
     public void initializer(Chat chat) {
         this.chat = chat;
-        connection = new Connection();
+        tcpConnection = new TcpConnection();
         validator = new Validator();
-        chatRepository = new ChatRepositoryInMemory();
+        chatRepository = new ChatRepositoryJPA();
         addMessages();
         generateTitle();
     }
@@ -67,7 +66,7 @@ public class ChatController {
         backButton.getStyleClass().add("backButton");
         titleWrapper.getChildren().add(backButton);
 
-        Label title = new Label(chat.getFriendUser().getName() + " " + chat.getFriendUser().getSurname());
+        Label title = new Label(chat.getFriendUser().getFirstName() + " " + chat.getFriendUser().getLastName());
         title.getStyleClass().add("titleLabel");
         titleWrapper.setAlignment(Pos.CENTER_LEFT);
         titleWrapper.getChildren().add(title);
@@ -80,16 +79,17 @@ public class ChatController {
             return;
         }
 
-        Message message = new Message(chat.getOwnerUser().getUserLogin(), chat.getFriendUser().getUserLogin(),
+        Message message = new Message(chat, chat.getOwnerUser(), chat.getFriendUser(),
                 inputField.getText());
 
         try {
-            connection.get().sendMessage(new ObjectMapper()
+            tcpConnection.get().sendMessage(new ObjectMapper()
                     .writeValueAsString(message));
         } catch (JsonProcessingException e) {
-            logger.log(Level.WARNING, "Cant parse message");
+            log.warn("Cant parse message");
+            e.printStackTrace();
         } catch (NullPointerException e) {
-            logger.log(Level.SEVERE, "Connection not found");
+            log.warn("Connection not found");
         }
 
         addMessage(message, true);
@@ -108,7 +108,7 @@ public class ChatController {
     public void addMessage(Message message, boolean isOwner) {
         if (chat.getMessages().isEmpty()) {
             AtomicBoolean isSave = new AtomicBoolean(true);
-            chatRepository.getAllChatsByUserLogin(chat.getOwnerUser().getUserLogin()).forEach(chatik -> {
+            chatRepository.getAllChatsByUserLogin(chat.getOwnerUser().getUserName()).forEach(chatik -> {
                 if (chat.equals(chatik)) {
                     isSave.set(false);
                 }
@@ -154,7 +154,7 @@ public class ChatController {
             Label label = new Label(message.getText() + "     " + message.getTime().getHour() + ":" + message.getTime().getMinute());
 
             label.setWrapText(true);
-            if (message.getUserNameFrom().equals(chat.getOwnerUser().getUserLogin())) {
+            if (message.getUserFrom().getUserName().equals(chat.getOwnerUser().getUserName())) {
                 label.getStyleClass().add("messageLabelOwner");
                 messageWrapper.setAlignment(Pos.CENTER_RIGHT);
             } else {

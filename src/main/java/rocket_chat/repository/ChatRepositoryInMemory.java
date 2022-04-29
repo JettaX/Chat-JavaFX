@@ -18,7 +18,7 @@ public class ChatRepositoryInMemory implements ChatRepository {
     public List<Chat> getAllChatsByUserLogin(String userLogin) {
         List<Chat> list = new ArrayList<>();
         chatList.forEach(chat -> {
-            if (chat.getOwnerUser().getUserLogin().equals(userLogin)) {
+            if (chat.getOwnerUser().getUserName().equals(userLogin)) {
                 list.add(chat);
             }
         });
@@ -27,8 +27,8 @@ public class ChatRepositoryInMemory implements ChatRepository {
 
     public Chat getChatByOwnerIdAndFriendId(String ownerUserName, String friendUserName) {
         for (Chat chat : chatList) {
-            if (chat.getOwnerUser().getUserLogin().equals(ownerUserName)) {
-                if (chat.getFriendUser().getUserLogin().equals(friendUserName)) {
+            if (chat.getOwnerUser().getUserName().equals(ownerUserName)) {
+                if (chat.getFriendUser().getUserName().equals(friendUserName)) {
                     return chat;
                 }
             }
@@ -38,10 +38,10 @@ public class ChatRepositoryInMemory implements ChatRepository {
 
     public void addMessage(Message message) {
         chatList.forEach(chat -> {
-            if (chat.getOwnerUser().getUserLogin().equals(message.getUserNameFrom()) ||
-                    chat.getOwnerUser().getUserLogin().equals(message.getUserNameTo())) {
-                if (chat.getFriendUser().getUserLogin().equals(message.getUserNameTo()) ||
-                        chat.getFriendUser().getUserLogin().equals(message.getUserNameFrom())) {
+            if (chat.getOwnerUser().getUserName().equals(message.getUserFrom().getUserName()) ||
+                    chat.getOwnerUser().getUserName().equals(message.getUserTo().getUserName())) {
+                if (chat.getFriendUser().getUserName().equals(message.getUserTo().getUserName()) ||
+                        chat.getFriendUser().getUserName().equals(message.getUserFrom().getUserName())) {
                     chat.addMessage(message);
                 }
             }
@@ -50,8 +50,8 @@ public class ChatRepositoryInMemory implements ChatRepository {
 
     public boolean deleteChatByUserIdAndFriendId(String ownerUserName, String friendUserName) {
         for (Chat chat : chatList) {
-            if (chat.getOwnerUser().getUserLogin().equals(ownerUserName)) {
-                if (chat.getFriendUser().getUserLogin().equals(friendUserName)) {
+            if (chat.getOwnerUser().getUserName().equals(ownerUserName)) {
+                if (chat.getFriendUser().getUserName().equals(friendUserName)) {
                     return chatList.remove(chat);
                 }
             }
@@ -62,8 +62,8 @@ public class ChatRepositoryInMemory implements ChatRepository {
     @Override
     public boolean chatExists(String ownerUserName, String friendUserName) {
         for (Chat chat : chatList) {
-            if (chat.getOwnerUser().getUserLogin().equals(ownerUserName)) {
-                if (chat.getFriendUser().getUserLogin().equals(friendUserName)) {
+            if (chat.getOwnerUser().getUserName().equals(ownerUserName)) {
+                if (chat.getFriendUser().getUserName().equals(friendUserName)) {
                     return true;
                 }
             }

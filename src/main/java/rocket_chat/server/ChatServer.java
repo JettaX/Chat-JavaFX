@@ -2,25 +2,23 @@ package rocket_chat.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import rocket_chat.entity.Message;
 import rocket_chat.entity.UserSecure;
 import rocket_chat.network.TCPConnection;
 import rocket_chat.network.TCPConnectionListener;
 import rocket_chat.repository.UserSecureRepository;
-import rocket_chat.repository.UserSecureRepositoryInMemory;
+import rocket_chat.repository.UserSecureRepositoryJPA;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+@Slf4j
 public class ChatServer implements TCPConnectionListener {
     public static void main(String[] args) {
         new ChatServer();
     }
-
-    private final Logger logger = Logger.getLogger(ChatServer.class.getName());
     private UserSecureRepository userSecureRepository;
     private Map<String, TCPConnection> connections;
     private Map<String, Queue<String>> queues;
@@ -28,10 +26,10 @@ public class ChatServer implements TCPConnectionListener {
 
     private ChatServer() {
         users = new TreeSet<>();
-        userSecureRepository = new UserSecureRepositoryInMemory();
-        initializeData();
+        userSecureRepository = new UserSecureRepositoryJPA();
+        /*initializeData();*/
         queues = new HashMap<>();
-        logger.log(java.util.logging.Level.INFO, "Starting server...");
+        log.info("Starting server...");
         connections = new HashMap<>();
 
         try (ServerSocket serverSocket = new ServerSocket(8188)) {
@@ -39,7 +37,7 @@ public class ChatServer implements TCPConnectionListener {
                 try {
                     new TCPConnection(serverSocket.accept(), this);
                 } catch (IOException e) {
-                    logger.log(java.util.logging.Level.SEVERE, "Error accepting connection: " + e.getMessage());
+                    log.warn("Error accepting connection: {}", e.getMessage());
                 }
             }
         } catch (IOException e) {
@@ -51,7 +49,7 @@ public class ChatServer implements TCPConnectionListener {
     public synchronized void onConnected(TCPConnection tcpConnection, String login) {
         connections.put(login, tcpConnection);
         checkQueues(login);
-        logger.log(java.util.logging.Level.INFO, "Client connected");
+        log.info("Client connected {}", login);
     }
 
     @Override
@@ -65,19 +63,19 @@ public class ChatServer implements TCPConnectionListener {
             connections.remove(login);
             users.remove(login);
         }
-        logger.log(java.util.logging.Level.INFO, "Client disconnected");
+        log.info("Client disconnected {}", login);
     }
 
     @Override
     public synchronized void onException(TCPConnection tcpConnection, Exception e) {
-        logger.log(java.util.logging.Level.SEVERE, e.getMessage());
+        log.warn(e.getMessage());
     }
 
     @Override
     public void onAttemptAuth(TCPConnection tcpConnection, String loginPassword) throws IOException {
-        logger.log(java.util.logging.Level.INFO, "Attempt auth");
         String login = loginPassword.split(":")[0].trim();
         String password = loginPassword.split(":")[1].trim();
+        log.info("Attempt auth {}", login);
         if (users.contains(login) || !userSecureRepository.checkAuth(login, password)) {
             throw new IOException("Auth failed");
         }
@@ -85,7 +83,7 @@ public class ChatServer implements TCPConnectionListener {
 
     @Override
     public void onAuthSuccess(TCPConnection tcpConnection, String login) {
-        logger.log(java.util.logging.Level.INFO, "Auth success");
+        log.info("Auth success {}", login);
         users.add(login);
         tcpConnection.authFailed("/auth_success");
         tcpConnection.authSuccess(login);
@@ -93,7 +91,7 @@ public class ChatServer implements TCPConnectionListener {
 
     @Override
     public void onAuthFailed(TCPConnection tcpConnection, String error) {
-        logger.log(java.util.logging.Level.INFO, "Auth failed");
+        log.info("Auth failed");
         if (error != null) {
             tcpConnection.authFailed(error);
         }
@@ -102,7 +100,7 @@ public class ChatServer implements TCPConnectionListener {
     private void sendMessage(String message) {
         Message mess = parseMessage(message);
 
-        String connectionId = mess.getUserNameTo();
+        String connectionId = mess.getUserTo().getUserName();
 
         if (connections.containsKey(connectionId)) {
             connections.get(connectionId).sendMessage(message);
@@ -112,7 +110,7 @@ public class ChatServer implements TCPConnectionListener {
     }
 
     private void addMessageInQueue(String gsonMessage, Message message) {
-        String connectionId = message.getUserNameTo();
+        String connectionId = message.getUserTo().getUserName();
         if (queues.containsKey(connectionId)) {
             Queue<String> queue = queues.get(connectionId);
             queue.add(gsonMessage);
@@ -137,7 +135,7 @@ public class ChatServer implements TCPConnectionListener {
         try {
             mess = new ObjectMapper().readerFor(Message.class).readValue(message);
         } catch (JsonProcessingException e) {
-            logger.log(Level.WARNING, "Error while parsing message", e);
+            log.warn("Error while parsing message");
         }
         return mess;
     }

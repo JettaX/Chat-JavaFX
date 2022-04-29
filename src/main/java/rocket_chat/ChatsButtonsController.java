@@ -11,15 +11,14 @@ import javafx.scene.layout.VBox;
 import rocket_chat.entity.Chat;
 import rocket_chat.entity.User;
 import rocket_chat.repository.ChatRepository;
-import rocket_chat.repository.ChatRepositoryInMemory;
+import rocket_chat.repository.ChatRepositoryJPA;
 import rocket_chat.repository.UserRepository;
-import rocket_chat.repository.UserRepositoryInMemory;
+import rocket_chat.repository.UserRepositoryJPA;
 import rocket_chat.validation.Validator;
 import rocket_chat.view.ChatsButton;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 
 public class ChatsButtonsController {
     public ScrollPane scrollPaneForChats;
@@ -35,8 +34,8 @@ public class ChatsButtonsController {
     public TextField searchInput;
 
     public void initializer() {
-        chatRepository = new ChatRepositoryInMemory();
-        userRepository = new UserRepositoryInMemory();
+        chatRepository = new ChatRepositoryJPA();
+        userRepository = new UserRepositoryJPA();
         addChats();
         searchInput.addEventHandler(Event.ANY, event ->
         {
@@ -53,7 +52,7 @@ public class ChatsButtonsController {
     private void addChats() {
         try {
             User ownerUser = Main.user;
-            List<Chat> chats = chatRepository.getAllChatsByUserLogin(ownerUser.getUserLogin());
+            List<Chat> chats = chatRepository.getAllChatsByUserLogin(ownerUser.getUserName());
             for (Chat chat : chats) {
                 HBox hBox = new HBox();
                 Button chatButton = new ChatsButton(chat);
@@ -77,15 +76,15 @@ public class ChatsButtonsController {
 
     public void searchKeyListener(KeyEvent keyEvent) {
         if (keyEvent.getCode().getCode() == 10) {
-            String searchString = searchInput.getText().toLowerCase(Locale.ROOT);
-            if (validator.isValid(searchString) && !searchString.equals(Main.user.getUserLogin().toLowerCase(Locale.ROOT))) {
+            String searchString = searchInput.getText();
+            if (validator.isValid(searchString) && !searchString.equals(Main.user.getUserName())) {
                 if (searchString.equals("/all")) {
                     chatsWrapper.getChildren().clear();
                     for (User user : userRepository.getUsers()) {
                         addSearchResult(user);
                     }
                 } else {
-                    User user = userRepository.getUserByUserLogin(searchString);
+                    User user = userRepository.getUserById(searchString);
                     if (user != null) {
                         chatsWrapper.getChildren().clear();
                         addSearchResult(user);

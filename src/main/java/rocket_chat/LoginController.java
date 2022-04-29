@@ -3,15 +3,14 @@ package rocket_chat;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import lombok.extern.slf4j.Slf4j;
 import rocket_chat.repository.*;
 
-import java.util.logging.Logger;
-
+@Slf4j
 public class LoginController {
-    private Logger logger = Logger.getLogger(LoginController.class.getName());
     private UserRepository userRepository;
     private UserSecureRepository userSecureRepository;
-    private Connection connection;
+    private TcpConnection tcpConnection;
     @FXML
     public Button loginButton;
     @FXML
@@ -21,8 +20,8 @@ public class LoginController {
 
     public void initialize() {
         userSecureRepository = new UserSecureRepositoryInMemory();
-        userRepository = new UserRepositoryInMemory();
-        connection = new Connection();
+        userRepository = new UserRepositoryJPA();
+        tcpConnection = new TcpConnection();
     }
 
     public void loginButtonAction() {
@@ -32,9 +31,9 @@ public class LoginController {
             return;
         }
         try {
-            connection.get().sendLogin(login, password);
+            tcpConnection.get().sendLogin(login, password);
         } catch (NullPointerException e) {
-            logger.info("Server is not connected");
+            log.warn("Server is not connected");
         }
     }
 }

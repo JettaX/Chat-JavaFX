@@ -1,31 +1,65 @@
 package rocket_chat.entity;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.*;
 
-@JsonPropertyOrder({"userLogin", "id", "name", "surname"})
-@AllArgsConstructor
+import java.util.Objects;
+
 @NoArgsConstructor
+@Builder
+@Getter
+@Setter
+@ToString
+@Entity
+@Table(name = "users")
 public class User {
-    @Getter
-    private String userLogin;
-    @Getter
-    @Setter
-    private String name;
-    @Getter
-    @Setter
-    private String surname;
-    @Getter
-    @Setter
+    @Id @Column(name = "user_name")
+    private String userName;
+    @Column(name = "first_name")
+    private String firstName;
+    @Column(name = "last_name")
+    private String lastName;
+    @Column(name = "image_path")
     private String imagePath;
 
-    public User(String userLogin, String name, String surname) {
-        this.name = name;
-        this.surname = surname;
-        this.userLogin = userLogin;
+    public User(String userName, String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.userName = userName;
         imagePath = "/images/default_icon.png";
+    }
+
+    @JsonCreator
+    public User(
+            @JsonProperty("userName")
+            String userName,
+            @JsonProperty("firstName")
+            String firstName,
+            @JsonProperty("lastName")
+            String lastName,
+            @JsonProperty("imagePath")
+            String imagePath) {
+        this.userName = userName;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.imagePath = imagePath;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return userName != null && Objects.equals(userName, user.userName);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

@@ -14,18 +14,18 @@ public class ChatsButton extends Button {
 
     public ChatsButton(Chat chat) {
         if (!chat.getMessages().isEmpty()) {
-            this.setText((chat.getFriendUser().getName() + " " + chat.getFriendUser().getSurname() + "\n" +
+            this.setText((chat.getFriendUser().getFirstName() + " " + chat.getFriendUser().getLastName() + "\n" +
                     chat.getMessages().get(chat.getMessages().size() - 1).getText()));
         } else {
-            this.setText((chat.getFriendUser().getName() + " " + chat.getFriendUser().getSurname()
-                    + "\n @" + chat.getOwnerUser().getUserLogin()));
+            this.setText((chat.getFriendUser().getFirstName() + " " + chat.getFriendUser().getLastName()
+                    + "\n @" + chat.getOwnerUser().getUserName()));
         }
         initializer(chat.getFriendUser());
     }
 
     public ChatsButton(User user) {
-        super(user.getName() + " " + user.getSurname() + "\n" +
-                "@" + user.getUserLogin());
+        super(user.getFirstName() + " " + user.getLastName() + "\n" +
+                "@" + user.getUserName());
         initializer(user);
     }
 

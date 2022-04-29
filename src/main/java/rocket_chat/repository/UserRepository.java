@@ -10,8 +10,6 @@ public interface UserRepository {
 
     public User getUserById(String userName);
 
-    public User getUserByUserLogin(String userLogin);
-
     public List<User> getUsers();
 
     public void deleteUserById(String userName);
