@@ -12,13 +12,6 @@
     -fx-padding: 0 0 0 15;
 }
 
-.backButton {
-    -fx-background-color: rgb(171, 51, 52);
-    -fx-pref-width: 60px;
-    -fx-pref-height: 30px;
-    -fx-background-radius: 10;
-}
-
 #messagesWrapper {
     -fx-spacing: 5px;
     -fx-padding: 5 5 5 5;

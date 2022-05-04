@@ -18,9 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 import rocket_chat.entity.Chat;
 import rocket_chat.entity.Message;
 import rocket_chat.repository.ChatRepository;
-import rocket_chat.repository.ChatRepositoryJPA;
-import rocket_chat.repository.TcpConnection;
+import rocket_chat.repository.ChatRepositoryInMemory;
+import rocket_chat.util.TcpConnection;
 import rocket_chat.validation.Validator;
+import rocket_chat.view.BackButton;
 import rocket_chat.view.LabelMessageNotSent;
 
 import java.io.IOException;
@@ -49,21 +50,13 @@ public class ChatController {
         this.chat = chat;
         tcpConnection = new TcpConnection();
         validator = new Validator();
-        chatRepository = new ChatRepositoryJPA();
+        chatRepository = new ChatRepositoryInMemory();
         addMessages();
         generateTitle();
     }
 
     public void generateTitle() {
-        Button backButton = new Button("Back");
-        backButton.setOnAction(event -> {
-            try {
-                Main.showChats(Main.user);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        backButton.getStyleClass().add("backButton");
+        Button backButton = new BackButton();
         titleWrapper.getChildren().add(backButton);
 
         Label title = new Label(chat.getFriendUser().getFirstName() + " " + chat.getFriendUser().getLastName());

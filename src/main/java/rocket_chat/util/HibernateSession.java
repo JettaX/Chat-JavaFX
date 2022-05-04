@@ -1,8 +1,7 @@
-package rocket_chat.repository;
+package rocket_chat.util;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import rocket_chat.util.HibernateCfg;
 
 public class HibernateSession {
     private static SessionFactory sessionFactory = HibernateCfg.buildSessionFactory();

@@ -9,4 +9,6 @@ public interface UserSecureRepository {
     public void createUserSecure(UserSecure userSecure);
 
     public boolean checkAuth(String login, String password);
+
+    public boolean updateLogin(String login, String newLogin);
 }

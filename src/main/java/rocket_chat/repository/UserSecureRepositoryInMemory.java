@@ -24,4 +24,9 @@ public class UserSecureRepositoryInMemory implements UserSecureRepository {
         }
         return false;
     }
+
+    @Override
+    public boolean updateLogin(String login, String newLogin) {
+        return false;
+    }
 }

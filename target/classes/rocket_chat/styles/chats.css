@@ -10,6 +10,13 @@
     -fx-pref-height: 50px;
 }
 
+#settingsButton {
+    -fx-background-color: rgb(29, 29, 29);
+    -fx-pref-width: 50px;
+    -fx-pref-height: 50px;
+    -fx-background-radius: 10;
+}
+
 .chatButtonWithFriend, .chatButtonWithUser {
     -fx-background-color: rgb(29, 29, 29);
     -fx-max-width: infinity;

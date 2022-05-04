@@ -1,4 +1,4 @@
-package rocket_chat.repository;
+package rocket_chat.util;
 
 import rocket_chat.network.TCPConnection;
 import rocket_chat.network.TCPConnectionListener;

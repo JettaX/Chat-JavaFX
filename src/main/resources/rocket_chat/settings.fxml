@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="rocket_chat.SettingsController"
+      fx:id="mainBox"
+      spacing="10"
+      prefHeight="400.0" prefWidth="600.0"
+      onMouseClicked="#mouseListener"
+      stylesheets="@styles/common.css, @styles/settings.css">
+	<HBox fx:id="titleBox"/>
+	<HBox fx:id="infoBox" alignment="CENTER"/>
+	<HBox fx:id="settingsBox" alignment="CENTER">
+		<VBox fx:id="settingsBoxWrapper">
+			<HBox HBox.hgrow="ALWAYS">
+				<TextField fx:id="labelUserNameField" editable="false" alignment="CENTER_LEFT">username</TextField>
+				<TextField fx:id="userNameField" editable="false" onMouseClicked="#editUserNameListener"
+				           alignment="CENTER_RIGHT"/>
+			</HBox>
+			<HBox HBox.hgrow="ALWAYS">
+				<TextField fx:id="labelFirstNameField" editable="false" alignment="CENTER_LEFT">first name</TextField>
+				<TextField fx:id="firstNameField" editable="false" onMouseClicked="#editFirstNameListener"
+				           alignment="CENTER_RIGHT"/>
+			</HBox>
+			<HBox HBox.hgrow="ALWAYS">
+				<TextField fx:id="labelLastNameField" editable="false" alignment="CENTER_LEFT">last name</TextField>
+				<TextField fx:id="lastNameField" editable="false" onMouseClicked="#editLastNameListener"
+				           alignment="CENTER_RIGHT"/>
+			</HBox>
+		</VBox>
+	</HBox>
+	<HBox alignment="CENTER">
+		<Button fx:id="saveButton" visible="false" styleClass="button-mark" onMouseClicked="#saveListener"
+		        alignment="CENTER">save
+		</Button>
+	</HBox>
+</VBox>

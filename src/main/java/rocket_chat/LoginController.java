@@ -4,12 +4,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import lombok.extern.slf4j.Slf4j;
+import rocket_chat.dao.UserDao;
 import rocket_chat.repository.*;
+import rocket_chat.util.TcpConnection;
 
 @Slf4j
 public class LoginController {
     private UserRepository userRepository;
-    private UserSecureRepository userSecureRepository;
     private TcpConnection tcpConnection;
     @FXML
     public Button loginButton;
@@ -19,8 +20,7 @@ public class LoginController {
     public TextField inputPassword;
 
     public void initialize() {
-        userSecureRepository = new UserSecureRepositoryInMemory();
-        userRepository = new UserRepositoryJPA();
+        userRepository = UserDao.getINSTANCE();
         tcpConnection = new TcpConnection();
     }
 

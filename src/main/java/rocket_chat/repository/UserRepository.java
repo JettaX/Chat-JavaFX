@@ -8,7 +8,13 @@ public interface UserRepository {
 
     public void saveUser(User user);
 
-    public User getUserById(String userName);
+    public void updateUser(User oldUser, User newUser);
+
+    public User getUserByUserName(String userName);
+
+    public User getUserByID(Long id);
+
+    public List<User> searchUser(String userName);
 
     public List<User> getUsers();
 

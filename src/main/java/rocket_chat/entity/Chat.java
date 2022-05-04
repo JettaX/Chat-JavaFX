@@ -27,6 +27,7 @@ public class Chat {
     @JoinColumn(name = "friend_user_id")
     private User friendUser;
     @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Message> messages = new ArrayList<>();
 
     public Chat(User ownerUser, User friendUser) {

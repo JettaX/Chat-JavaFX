@@ -13,6 +13,7 @@ import java.util.Objects;
 @Setter
 @Builder
 @Entity
+@ToString
 @Table(name = "user_secure")
 public class UserSecure {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

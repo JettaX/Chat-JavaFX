@@ -1,24 +1,25 @@
 package rocket_chat;
 
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import rocket_chat.dao.UserDao;
 import rocket_chat.entity.Chat;
 import rocket_chat.entity.User;
-import rocket_chat.repository.ChatRepository;
-import rocket_chat.repository.ChatRepositoryJPA;
-import rocket_chat.repository.UserRepository;
-import rocket_chat.repository.UserRepositoryJPA;
+import rocket_chat.repository.*;
 import rocket_chat.validation.Validator;
 import rocket_chat.view.ChatsButton;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 public class ChatsButtonsController {
     public ScrollPane scrollPaneForChats;
@@ -27,6 +28,8 @@ public class ChatsButtonsController {
     private UserRepository userRepository;
     private boolean isLoadSearch = false;
     @FXML
+    public Button settingsButton;
+    @FXML
     public VBox chatsWrapper;
     @FXML
     public HBox searchWrapper;
@@ -34,8 +37,11 @@ public class ChatsButtonsController {
     public TextField searchInput;
 
     public void initializer() {
-        chatRepository = new ChatRepositoryJPA();
-        userRepository = new UserRepositoryJPA();
+        chatRepository = new ChatRepositoryInMemory();
+        userRepository = UserDao.getINSTANCE();
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon/settings.png")),
+                40, 40, true, true);
+        settingsButton.setGraphic(new javafx.scene.image.ImageView(image));
         addChats();
         searchInput.addEventHandler(Event.ANY, event ->
         {
@@ -84,10 +90,12 @@ public class ChatsButtonsController {
                         addSearchResult(user);
                     }
                 } else {
-                    User user = userRepository.getUserById(searchString);
-                    if (user != null) {
+                    List<User> userList = userRepository.searchUser(searchString);
+                    if (!userList.isEmpty()) {
                         chatsWrapper.getChildren().clear();
-                        addSearchResult(user);
+                        for (User us : userList) {
+                            addSearchResult(us);
+                        }
                     }
                 }
             }
@@ -110,5 +118,13 @@ public class ChatsButtonsController {
         });
         hBox.getChildren().add(chatButton);
         chatsWrapper.getChildren().add(hBox);
+    }
+
+    public void settingsButtonListener(ActionEvent actionEvent) {
+        try {
+            Main.showSettings();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

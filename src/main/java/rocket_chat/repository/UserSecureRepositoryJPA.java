@@ -2,6 +2,7 @@ package rocket_chat.repository;
 
 import jakarta.persistence.Query;
 import rocket_chat.entity.UserSecure;
+import rocket_chat.util.HibernateSession;
 
 public class UserSecureRepositoryJPA implements UserSecureRepository {
 
@@ -29,5 +30,10 @@ public class UserSecureRepositoryJPA implements UserSecureRepository {
         HibernateSession.getSession().getTransaction().commit();
         UserSecure userSecure = (UserSecure) query.getSingleResult();
         return userSecure.getUserPassword().equals(password);
+    }
+
+    @Override
+    public boolean updateLogin(String login, String newLogin) {
+        return false;
     }
 }

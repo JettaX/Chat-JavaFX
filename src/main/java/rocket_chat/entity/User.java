@@ -2,15 +2,13 @@ package rocket_chat.entity;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Objects;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Getter
 @Setter
@@ -18,7 +16,10 @@ import java.util.Objects;
 @Entity
 @Table(name = "users")
 public class User {
-    @Id @Column(name = "user_name")
+    @Id @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "user_name")
     private String userName;
     @Column(name = "first_name")
     private String firstName;

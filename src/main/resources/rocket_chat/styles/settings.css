@@ -1,0 +1,18 @@
+.picture-button {
+  -fx-background-color: rgb(45, 45, 45);
+  -fx-pref-width: 120px;
+  -fx-pref-height: 120px;
+  -fx-background-radius: 60px;
+}
+
+#infoBox {
+  -fx-background-color: rgb(45, 45, 45);
+}
+
+#settingsBox {
+  -fx-background-color: rgb(45, 45, 45);
+}
+
+#titleBox {
+  -fx-background-color: rgb(45, 45, 45);
+}

@@ -4,11 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import lombok.extern.slf4j.Slf4j;
+import rocket_chat.dao.UserDao;
 import rocket_chat.entity.Chat;
 import rocket_chat.entity.Message;
 import rocket_chat.network.TCPConnection;
 import rocket_chat.network.TCPConnectionListener;
 import rocket_chat.repository.*;
+import rocket_chat.util.TcpConnection;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -22,8 +24,8 @@ public class TcpListener implements TCPConnectionListener {
 
     public TcpListener() {
         tcpConnection = new TcpConnection();
-        chatRepository = new ChatRepositoryJPA();
-        userRepository = new UserRepositoryJPA();
+        chatRepository = new ChatRepositoryInMemory();
+        userRepository = UserDao.getINSTANCE();
         createConnections();
     }
 
@@ -43,9 +45,8 @@ public class TcpListener implements TCPConnectionListener {
             Message finalMess = mess;
             Platform.runLater(() -> Main.chatController.addMessage(finalMess, false));
         } else {
-            if (!chatRepository.chatExists(mess.getUserTo().getUserName(), mess.getUserFrom().getUserName())) {
-                chatRepository.saveChat(new Chat(userRepository.getUserById(mess.getUserTo().getUserName()),
-                        userRepository.getUserById(mess.getUserFrom().getUserName())));
+            if (!chatRepository.chatExists(Objects.requireNonNull(mess).getUserTo().getUserName(), mess.getUserFrom().getUserName())) {
+                chatRepository.saveChat(new Chat(mess.getUserTo(), mess.getUserFrom()));
             }
             chatRepository.addMessage(mess);
         }
@@ -78,7 +79,7 @@ public class TcpListener implements TCPConnectionListener {
                     throw new IOException("Login is null");
                 }
                 Main.isServerConnected = true;
-                Main.showChats(userRepository.getUserById(login));
+                Main.showChats(userRepository.getUserByUserName(login));
             } catch (IOException e) {
                 log.warn("Error while getting user");
             }

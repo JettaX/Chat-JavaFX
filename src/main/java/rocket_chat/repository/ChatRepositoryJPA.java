@@ -3,6 +3,7 @@ package rocket_chat.repository;
 import rocket_chat.Main;
 import rocket_chat.entity.Chat;
 import rocket_chat.entity.Message;
+import rocket_chat.util.HibernateSession;
 
 import java.util.List;
 
@@ -62,8 +63,9 @@ public class ChatRepositoryJPA implements ChatRepository {
     @Override
     public boolean chatExists(String ownerUserName, String friendUserName) {
         HibernateSession.getSession().beginTransaction();
-        Chat chats = HibernateSession.getSession().createQuery("select c from Chat c where c.ownerUser.userName = ?1 and c" +
-                        ".friendUser.userName = ?2", Chat.class)
+        Chat chats = HibernateSession.getSession().createQuery(
+                        "select c from Chat c where c.ownerUser.userName = ?1 and c.friendUser.userName = ?2",
+                        Chat.class)
                 .setParameter(1, ownerUserName).setParameter(2, friendUserName).getSingleResult();
         HibernateSession.getSession().getTransaction().commit();
         return chats != null;

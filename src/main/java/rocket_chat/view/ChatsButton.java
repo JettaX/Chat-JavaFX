@@ -1,14 +1,9 @@
 package rocket_chat.view;
 
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Rectangle;
 import rocket_chat.entity.Chat;
 import rocket_chat.entity.User;
-
-import java.util.Objects;
+import rocket_chat.view.utils.RoundPicture;
 
 public class ChatsButton extends Button {
 
@@ -30,23 +25,7 @@ public class ChatsButton extends Button {
     }
 
     private void initializer(User user) {
-        int imageSize = 46;
         this.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(user.getImagePath())), 0, imageSize,
-                true, false);
-
-        WritableImage writableImage = new WritableImage(image.getPixelReader(),
-                (int) (image.getWidth() / 2 - imageSize / 2), 0,
-                imageSize, imageSize);
-        image = writableImage;
-
-        Rectangle rectangle = new Rectangle(0, 0, imageSize, imageSize);
-        rectangle.setArcWidth(50.0);
-        rectangle.setArcHeight(50.0);
-
-        ImagePattern pattern = new ImagePattern(image);
-        rectangle.setFill(pattern);
-
-        this.setGraphic(rectangle);
+        this.setGraphic(RoundPicture.getRoundPicture(46, user.getImagePath()));
     }
 }
