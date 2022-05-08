@@ -128,6 +128,7 @@ public class SettingsController {
 
     public void saveListener(MouseEvent mouseEvent) {
         String userName = userNameField.getText();
+        String oldUserName = Main.user.getUserName();
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();
 
@@ -141,12 +142,14 @@ public class SettingsController {
             User user = new User(Main.user.getId(), userName, firstName, lastName, Main.user.getImagePath());
             userRepository.updateUser(Main.user, user);
             Main.user = user;
-            creatAlertAndShow("Your username has been changed. You must log in with your new username");
-            try {
-                Main.exit();
-                Main.showLogin();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            if (!userName.equals(oldUserName)) {
+                creatAlertAndShow("Your username has been changed. You must log in with your new username");
+                try {
+                    Main.exit();
+                    Main.showLogin();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

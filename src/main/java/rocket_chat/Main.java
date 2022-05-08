@@ -24,6 +24,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        tcpConnection = new TcpConnection();
         this.stage = stage;
         stage.setResizable(true);
         stage.setTitle("RocketChat");
