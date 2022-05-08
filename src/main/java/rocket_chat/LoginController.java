@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import lombok.extern.slf4j.Slf4j;
-import rocket_chat.dao.UserDao;
+import rocket_chat.dao.UserDaoJDBC;
 import rocket_chat.repository.*;
 import rocket_chat.util.TcpConnection;
 
@@ -20,7 +20,7 @@ public class LoginController {
     public TextField inputPassword;
 
     public void initialize() {
-        userRepository = UserDao.getINSTANCE();
+        userRepository = UserDaoJDBC.getINSTANCE();
         tcpConnection = new TcpConnection();
     }
 

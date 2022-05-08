@@ -7,13 +7,14 @@ import rocket_chat.repository.UserRepository;
 import rocket_chat.util.JdbcConnection;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
-public class UserDao implements UserRepository {
+public class UserDaoJDBC implements UserRepository {
     @Getter
-    private static final UserDao INSTANCE = new UserDao();
+    private static final UserDaoJDBC INSTANCE = new UserDaoJDBC();
     private static final String SAVE_USER = "INSERT INTO users (" +
             "user_name, first_name, last_name, image_path) VALUES (?, ?, ?, ?)";
     private static final String UPDATE_USER = "UPDATE users SET " +
@@ -25,14 +26,19 @@ public class UserDao implements UserRepository {
     private static final String GET_USER_BY_ID = "SELECT * FROM users WHERE id = ?";
 
     @Override
-    public void saveUser(User user) {
+    public User saveUser(User user) {
         try (var connection = JdbcConnection.getConnection();
-             var statement = connection.prepareStatement(SAVE_USER)) {
+             var statement = connection.prepareStatement(SAVE_USER, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, user.getUserName());
             statement.setString(2, user.getFirstName());
             statement.setString(3, user.getLastName());
             statement.setString(4, user.getImagePath());
             statement.executeUpdate();
+            var resultSet = statement.getGeneratedKeys();
+            if (resultSet.next()) {
+                user.setId(resultSet.getLong("id"));
+            }
+            return user;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

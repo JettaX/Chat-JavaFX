@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import rocket_chat.entity.Chat;
 import rocket_chat.entity.User;
+import rocket_chat.util.TcpConnection;
 
 import java.io.IOException;
 
@@ -15,6 +16,7 @@ import java.io.IOException;
 public class Main extends Application {
     public static User user;
     private static Stage stage;
+    private static TcpConnection tcpConnection;
     public static ChatController chatController;
     public static boolean isFriendConnected = false;
     public static boolean isServerConnected = false;
@@ -27,8 +29,7 @@ public class Main extends Application {
         stage.setTitle("RocketChat");
         stage.setWidth(400);
         stage.setHeight(600);
-        thread = connectionCheckerThread();
-        thread.start();
+        createConnectionCheckerThread();
         showLogin();
     }
 
@@ -84,11 +85,25 @@ public class Main extends Application {
         return fxmlLoader;
     }
 
+    public static void exit() {
+        user = null;
+        isServerConnected = false;
+        isFriendConnected = false;
+        tcpConnection.remove();
+        thread.interrupt();
+        createConnectionCheckerThread();
+    }
+
+    public static void createConnectionCheckerThread() {
+        thread = connectionCheckerThread();
+        thread.start();
+    }
+
     private static void nullingLink() {
         chatController = null;
     }
 
-    private void createConnection() throws InterruptedException {
+    private static void createConnection() throws InterruptedException {
         if (!isServerConnected && user == null) {
             new TcpListener();
         }
@@ -105,7 +120,7 @@ public class Main extends Application {
         }
     }
 
-    private Thread connectionCheckerThread() {
+    private static Thread connectionCheckerThread() {
         return new Thread(() -> {
             while (true) {
                 try {

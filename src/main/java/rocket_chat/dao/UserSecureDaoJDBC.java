@@ -9,10 +9,10 @@ import rocket_chat.util.JdbcConnection;
 import java.sql.SQLException;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
-public class UserSecureDao implements UserSecureRepository {
+public class UserSecureDaoJDBC implements UserSecureRepository {
 
     @Getter
-    private static final UserSecureDao INSTANCE = new UserSecureDao();
+    private static final UserSecureDaoJDBC INSTANCE = new UserSecureDaoJDBC();
     private static final String GET_BY_USERNAME_AND_PASSWORD =
             "SELECT * FROM user_secure WHERE user_login = ? AND user_password = ?";
     private static final String SAVE =

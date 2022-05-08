@@ -26,7 +26,6 @@ public class Message {
     private Long id;
     @ManyToOne
     @JoinColumn(name = "chat_id")
-    @JsonIgnore
     private Chat chat;
     @ManyToOne
     @JoinColumn(name = "user_from_id")

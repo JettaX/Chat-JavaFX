@@ -15,10 +15,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import rocket_chat.dao.ChatDaoJDBC;
 import rocket_chat.entity.Chat;
 import rocket_chat.entity.Message;
 import rocket_chat.repository.ChatRepository;
-import rocket_chat.repository.ChatRepositoryInMemory;
 import rocket_chat.util.TcpConnection;
 import rocket_chat.validation.Validator;
 import rocket_chat.view.BackButton;
@@ -50,7 +50,7 @@ public class ChatController {
         this.chat = chat;
         tcpConnection = new TcpConnection();
         validator = new Validator();
-        chatRepository = new ChatRepositoryInMemory();
+        chatRepository = ChatDaoJDBC.getINSTANCE();
         addMessages();
         generateTitle();
     }
@@ -110,7 +110,7 @@ public class ChatController {
                 chatRepository.saveChat(chat);
             }
         }
-        chatRepository.addMessage(message);
+        chat.addMessage(message);
 
         HBox messageWrapper = new HBox();
         messageWrapper.getStyleClass().add("messageWrapper");

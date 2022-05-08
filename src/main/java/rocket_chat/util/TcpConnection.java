@@ -19,6 +19,11 @@ public class TcpConnection {
     }
 
     public void remove() {
+        connection.disconnect();
         connection = null;
+    }
+
+    public boolean isConnected() {
+        return connection != null;
     }
 }

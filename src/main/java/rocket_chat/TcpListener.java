@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import lombok.extern.slf4j.Slf4j;
-import rocket_chat.dao.UserDao;
+import rocket_chat.dao.ChatDaoJDBC;
+import rocket_chat.dao.UserDaoJDBC;
 import rocket_chat.entity.Chat;
 import rocket_chat.entity.Message;
 import rocket_chat.network.TCPConnection;
@@ -24,8 +25,8 @@ public class TcpListener implements TCPConnectionListener {
 
     public TcpListener() {
         tcpConnection = new TcpConnection();
-        chatRepository = new ChatRepositoryInMemory();
-        userRepository = UserDao.getINSTANCE();
+        chatRepository = ChatDaoJDBC.getINSTANCE();
+        userRepository = UserDaoJDBC.getINSTANCE();
         createConnections();
     }
 
@@ -48,7 +49,8 @@ public class TcpListener implements TCPConnectionListener {
             if (!chatRepository.chatExists(Objects.requireNonNull(mess).getUserTo().getUserName(), mess.getUserFrom().getUserName())) {
                 chatRepository.saveChat(new Chat(mess.getUserTo(), mess.getUserFrom()));
             }
-            chatRepository.addMessage(mess);
+            Chat chat = chatRepository.getChatByOwnerIdAndFriendId(mess.getUserTo().getUserName(), mess.getUserFrom().getUserName());
+            chat.addMessage(mess);
         }
     }
 

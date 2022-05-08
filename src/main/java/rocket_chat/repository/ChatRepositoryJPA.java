@@ -10,10 +10,16 @@ import java.util.List;
 public class ChatRepositoryJPA implements ChatRepository {
 
     @Override
-    public void saveChat(Chat chat) {
+    public Chat saveChat(Chat chat) {
         HibernateSession.getSession().beginTransaction();
         HibernateSession.getSession().persist(chat);
         HibernateSession.getSession().getTransaction().commit();
+        return chat;
+    }
+
+    @Override
+    public Chat getChatById(Long chatId) {
+        return null;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package rocket_chat;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -10,10 +11,12 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import rocket_chat.dao.UserDao;
+import rocket_chat.dao.ChatDaoJDBC;
+import rocket_chat.dao.UserDaoJDBC;
 import rocket_chat.entity.Chat;
 import rocket_chat.entity.User;
-import rocket_chat.repository.*;
+import rocket_chat.repository.ChatRepository;
+import rocket_chat.repository.UserRepository;
 import rocket_chat.validation.Validator;
 import rocket_chat.view.ChatsButton;
 
@@ -37,8 +40,8 @@ public class ChatsButtonsController {
     public TextField searchInput;
 
     public void initializer() {
-        chatRepository = new ChatRepositoryInMemory();
-        userRepository = UserDao.getINSTANCE();
+        chatRepository = ChatDaoJDBC.getINSTANCE();
+        userRepository = UserDaoJDBC.getINSTANCE();
         Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon/settings.png")),
                 40, 40, true, true);
         settingsButton.setGraphic(new javafx.scene.image.ImageView(image));
@@ -65,11 +68,24 @@ public class ChatsButtonsController {
                 HBox.setHgrow(chatButton, javafx.scene.layout.Priority.ALWAYS);
                 chatButton.getStyleClass().add("chatButtonWithFriend");
                 chatButton.setOnAction(event -> {
-                    try {
-                        Main.showChat(chat);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    Thread thread = new Thread(() -> {
+                        Chat chat1 = chatRepository.getChatByOwnerIdAndFriendId(chat.getOwnerUser().getUserName(), chat.getFriendUser().getUserName());
+                        while (chat1 == null) {
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        Platform.runLater(() -> {
+                            try {
+                                Main.showChat(chat1);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                    });
+                    thread.start();
                 });
                 hBox.getChildren().add(chatButton);
                 chatsWrapper.getChildren().add(hBox);
@@ -78,6 +94,7 @@ public class ChatsButtonsController {
             System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
         }
+
     }
 
     public void searchKeyListener(KeyEvent keyEvent) {

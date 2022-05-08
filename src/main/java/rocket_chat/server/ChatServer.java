@@ -3,8 +3,9 @@ package rocket_chat.server;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import rocket_chat.dao.UserDao;
-import rocket_chat.dao.UserSecureDao;
+import rocket_chat.dao.ChatDaoJDBC;
+import rocket_chat.dao.UserDaoJDBC;
+import rocket_chat.dao.UserSecureDaoJDBC;
 import rocket_chat.entity.Chat;
 import rocket_chat.entity.Message;
 import rocket_chat.entity.User;
@@ -34,7 +35,7 @@ public class ChatServer implements TCPConnectionListener {
 
     private ChatServer() {
         users = new TreeSet<>();
-        userSecureRepository = UserSecureDao.getINSTANCE();
+        userSecureRepository = UserSecureDaoJDBC.getINSTANCE();
         initializeData();
         queues = new HashMap<>();
         log.info("Starting server...");
@@ -150,8 +151,7 @@ public class ChatServer implements TCPConnectionListener {
 
     private void initializeData() {
 
-        try (var connection = JdbcConnection.getConnection();
-             var statement = connection.createStatement()) {
+        try (var connection = JdbcConnection.getConnection(); var statement = connection.createStatement()) {
             String sql = new String(Files.readAllBytes(Paths.get("src/main/resources/Query.sql")));
             statement.execute(sql);
         } catch (SQLException | IOException e) {
@@ -174,26 +174,23 @@ public class ChatServer implements TCPConnectionListener {
         userSecureRepository.createUserSecure(userSixSecure);
         userSecureRepository.createUserSecure(mainUserSecure);
 
-        ChatRepository chatRepository = new ChatRepositoryInMemory();
-        UserRepository userRepository = UserDao.getINSTANCE();
+        ChatRepository chatRepository = ChatDaoJDBC.getINSTANCE();
+        UserRepository userRepository = UserDaoJDBC.getINSTANCE();
 
-        User mainUser = new User("admin", "Max", "Maxon");
-        User userOne = new User("lilyPit", "Lily", "Pitersky");
-        User userTwo = new User("Karmenchik", "Karen", "Mamonage");
-        User userThree = new User("SteveApple", "Steve", "Jobs");
-        User userFour = new User("Jonson@Lol", "Jon", "Ar");
-        User userFive = new User("KittyClair", "Karen", "Clair");
-        User userSix = new User("KekLol", "Sara", "Bond");
+        User mainUser = userRepository.saveUser(new User("admin", "Max", "Maxon"));
+        User userOne = userRepository.saveUser(new User("lilyPit", "Lily", "Pitersky", "/images/iconsForUsers/1.jpg"));
+        User userTwo = userRepository.saveUser(new User("Karmenchik", "Karen", "Mamonage", "/images/iconsForUsers/2.jpg"));
+        User userThree = userRepository.saveUser(new User("SteveApple", "Steve", "Jobs", "/images/iconsForUsers/3.jpg"));
+        User userFour = userRepository.saveUser(new User("Jonson@Lol", "Jon", "Ar"));
+        User userFive = userRepository.saveUser(new User("KittyClair", "Karen", "Clair"));
+        User userSix = userRepository.saveUser(new User("KekLol", "Sara", "Bond"));
 
-        userOne.setImagePath("/images/iconsForUsers/1.jpg");
-        userTwo.setImagePath("/images/iconsForUsers/2.jpg");
-        userThree.setImagePath("/images/iconsForUsers/3.jpg");
+        Chat chatWithOne = chatRepository.saveChat(new Chat(mainUser, userOne));
+        Chat chatWithTwo = chatRepository.saveChat(new Chat(mainUser, userTwo));
 
-        Chat chatWithOne = new Chat(mainUser, userOne);
-        Chat chatWithTwo = new Chat(mainUser, userTwo);
+        Chat chatWithThree = chatRepository.saveChat(new Chat(userOne, mainUser));
+        Chat chatWithFour = chatRepository.saveChat(new Chat(userOne, userThree));
 
-        Chat chatWithThree = new Chat(userOne, mainUser);
-        Chat chatWithFour = new Chat(userOne, userThree);
 
         Message message1 = new Message(chatWithOne, userOne, mainUser, "Hi");
         Message message2 = new Message(chatWithOne, mainUser, userOne, "Lol");
@@ -204,10 +201,7 @@ public class ChatServer implements TCPConnectionListener {
         Message message7 = new Message(chatWithTwo, mainUser, userTwo, "Go");
         Message message8 = new Message(chatWithTwo, userTwo, mainUser, "Work");
         Message message9 = new Message(chatWithTwo, mainUser, userTwo, "Dance");
-        Message message11 = new Message(chatWithTwo, mainUser, userTwo, "Конструктор поля JFormattedTextField в " +
-                "качестве параметра" +
-                " " +
-                "получает форматирующий объект, унаследованный от абстрактного внутреннего класса AbstractFormatter. Когда в форматированное текстовое поле вводятся символы, то сразу же вызывается форматирующий объект, в задачу которого входит анализ введенного значения и принятие решения о соответствии этого значения некоторому формату. Основными составляющими форматирующего объекта являются фильтр документа DocumentFilter, который принимает решение, разрешать или нет очередное изменение в документе, а также навигационный фильтр NavigationFilter. Навигационный фильтр получает исчерпывающую информацию о перемещениях курсора в текстовом поле и способен запрещать курсору появляться в некоторых областях поля (таких как разделители номеров, дат и других данных, которые не должны редактироваться). Форматирующий объект также отвеачет за действие, которое предпринимается в случае ввода пользователем неверного значения (по умолчанию раздается звуковой сигнал).");
+        Message message11 = new Message(chatWithTwo, mainUser, userTwo, "Конструктор поля JFormattedTextField в " + "качестве параметра" + " " + "получает форматирующий объект, унаследованный от абстрактного внутреннего класса AbstractFormatter. Когда в форматированное текстовое поле вводятся символы, то сразу же вызывается форматирующий объект, в задачу которого входит анализ введенного значения и принятие решения о соответствии этого значения некоторому формату. Основными составляющими форматирующего объекта являются фильтр документа DocumentFilter, который принимает решение, разрешать или нет очередное изменение в документе, а также навигационный фильтр NavigationFilter. Навигационный фильтр получает исчерпывающую информацию о перемещениях курсора в текстовом поле и способен запрещать курсору появляться в некоторых областях поля (таких как разделители номеров, дат и других данных, которые не должны редактироваться). Форматирующий объект также отвеачет за действие, которое предпринимается в случае ввода пользователем неверного значения (по умолчанию раздается звуковой сигнал).");
         Message message10 = new Message(chatWithTwo, userTwo, mainUser, "Out");
 
         chatWithOne.addMessage(message1);
@@ -223,18 +217,5 @@ public class ChatServer implements TCPConnectionListener {
         chatWithTwo.addMessage(message9);
         chatWithTwo.addMessage(message10);
         chatWithTwo.addMessage(message11);
-
-        userRepository.saveUser(mainUser);
-        userRepository.saveUser(userOne);
-        userRepository.saveUser(userTwo);
-        userRepository.saveUser(userThree);
-        userRepository.saveUser(userFour);
-        userRepository.saveUser(userFive);
-        userRepository.saveUser(userSix);
-
-        chatRepository.saveChat(chatWithOne);
-        chatRepository.saveChat(chatWithTwo);
-        chatRepository.saveChat(chatWithThree);
-        chatRepository.saveChat(chatWithFour);
     }
 }

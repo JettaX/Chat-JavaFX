@@ -9,10 +9,11 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import rocket_chat.dao.UserDao;
-import rocket_chat.dao.UserSecureDao;
+import rocket_chat.dao.UserDaoJDBC;
+import rocket_chat.dao.UserSecureDaoJDBC;
 import rocket_chat.entity.User;
 import rocket_chat.repository.UserRepository;
+import rocket_chat.util.TcpConnection;
 import rocket_chat.view.BackButton;
 import rocket_chat.view.utils.RoundPicture;
 
@@ -20,6 +21,7 @@ import java.io.IOException;
 
 public class SettingsController {
     private UserRepository userRepository;
+    private TcpConnection tcpConnection;
     @FXML
     public VBox mainBox;
     @FXML
@@ -46,7 +48,8 @@ public class SettingsController {
     public Button saveButton;
 
     public void initialize() {
-        userRepository = UserDao.getINSTANCE();
+        userRepository = UserDaoJDBC.getINSTANCE();
+        tcpConnection = new TcpConnection();
         generateTitle();
         generateInfo();
         generateSettings();
@@ -71,7 +74,7 @@ public class SettingsController {
         button.setGraphic(RoundPicture.getRoundPicture(120, Main.user.getImagePath()));
         vBox.getChildren().add(button);
 
-        Label labelUserName = new Label("@" .concat(Main.user.getUserName()));
+        Label labelUserName = new Label("@".concat(Main.user.getUserName()));
         labelUserName.getStyleClass().add("label");
         vBox.setAlignment(javafx.geometry.Pos.CENTER);
         vBox.getChildren().add(labelUserName);
@@ -134,11 +137,17 @@ public class SettingsController {
         } else if (!userName.equals(Main.user.getUserName()) ||
                 !firstName.equals(Main.user.getFirstName()) ||
                 !lastName.equals(Main.user.getLastName())) {
-            UserSecureDao.getINSTANCE().updateLogin(Main.user.getUserName(), userName);
-            User user = new User(userName, firstName, lastName, Main.user.getImagePath());
+            UserSecureDaoJDBC.getINSTANCE().updateLogin(Main.user.getUserName(), userName);
+            User user = new User(Main.user.getId(), userName, firstName, lastName, Main.user.getImagePath());
             userRepository.updateUser(Main.user, user);
             Main.user = user;
             creatAlertAndShow("Your username has been changed. You must log in with your new username");
+            try {
+                Main.exit();
+                Main.showLogin();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

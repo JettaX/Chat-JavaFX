@@ -6,7 +6,9 @@ import rocket_chat.entity.Message;
 import java.util.List;
 
 public interface ChatRepository {
-    public void saveChat(Chat chat);
+    public Chat saveChat(Chat chat);
+
+    public Chat getChatById(Long chatId);
 
     public List<Chat> getAllChatsByUserLogin(String userLogin);
 

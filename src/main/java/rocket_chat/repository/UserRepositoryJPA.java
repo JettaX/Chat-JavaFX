@@ -7,10 +7,11 @@ import java.util.List;
 
 public class UserRepositoryJPA implements UserRepository {
     @Override
-    public void saveUser(User user) {
+    public User saveUser(User user) {
         HibernateSession.getSession().beginTransaction();
         HibernateSession.getSession().persist(user);
         HibernateSession.getSession().getTransaction().commit();
+        return user;
     }
 
     @Override

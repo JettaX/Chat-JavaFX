@@ -3,6 +3,7 @@ package rocket_chat.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import rocket_chat.dao.ChatDaoJDBC;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,6 @@ import java.util.Objects;
 public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
     @ManyToOne
     @JoinColumn(name = "owner_user_id")
@@ -37,6 +37,7 @@ public class Chat {
     public void addMessage(Message message) {
         messages.add(message);
         message.setChat(this);
+        ChatDaoJDBC.getINSTANCE().addMessage(message);
     }
 
     @Override
