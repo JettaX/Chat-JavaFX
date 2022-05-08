@@ -4,10 +4,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-
-import java.io.IOException;
+import lombok.Setter;
+import rocket_chat.view.utils.BackUrl;
 
 public class ErrorController {
+    @Setter
+    private BackUrl back;
     @FXML
     public Label errorLabel;
 
@@ -20,10 +22,16 @@ public class ErrorController {
 
     public void handleOkButton(ActionEvent event) {
         okButton.getScene().getWindow().hide();
-        try {
+        if (back != null) {
+            if (back.equals(BackUrl.LOGIN)) {
+                Main.showLogin();
+            }
+            if (back.equals(BackUrl.SIGNUP)) {
+                Main.showSignUp();
+            }
+        } else {
             Main.showLogin();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
     }
 }

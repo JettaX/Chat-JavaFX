@@ -2,22 +2,23 @@ package rocket_chat.view;
 
 import javafx.scene.control.Button;
 import rocket_chat.Main;
-
-import java.io.IOException;
+import rocket_chat.view.utils.BackUrl;
 
 public class BackButton extends Button {
+    private BackUrl backUrl;
 
-    public BackButton() {
+    public BackButton(BackUrl backUrl) {
         super("Back");
+        this.backUrl = backUrl;
         initializer();
     }
 
     private void initializer() {
         this.setOnAction(event -> {
-            try {
+            if (backUrl.equals(BackUrl.CHAT_LIST)) {
                 Main.showChats(Main.user);
-            } catch (IOException e) {
-                e.printStackTrace();
+            } else if (backUrl.equals(BackUrl.LOGIN)) {
+                Main.showLogin();
             }
         });
         this.getStyleClass().add("backButton");

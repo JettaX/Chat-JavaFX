@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import rocket_chat.entity.Chat;
 import rocket_chat.entity.User;
 import rocket_chat.util.TcpConnection;
+import rocket_chat.view.utils.BackUrl;
 
 import java.io.IOException;
 
@@ -23,7 +24,7 @@ public class Main extends Application {
     public static Thread thread;
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         tcpConnection = new TcpConnection();
         this.stage = stage;
         stage.setResizable(true);
@@ -38,7 +39,7 @@ public class Main extends Application {
         launch();
     }
 
-    public static void showChat(Chat chat) throws IOException {
+    public static void showChat(Chat chat) {
         stage.close();
         FXMLLoader fxmlLoader = createStage("chat.fxml");
         ChatController chatController = fxmlLoader.getController();
@@ -46,7 +47,7 @@ public class Main extends Application {
         chatController.initializer(chat);
     }
 
-    public static void showChats(User user) throws IOException {
+    public static void showChats(User user) {
         Main.user = user;
         stage.close();
         FXMLLoader fxmlLoader = createStage("chats.fxml");
@@ -55,28 +56,40 @@ public class Main extends Application {
         nullingLink();
     }
 
-    public static void showSettings() throws IOException {
+    public static void showSettings() {
         stage.close();
         createStage("settings.fxml");
         nullingLink();
     }
 
-    public static void showError(String message) throws IOException {
+    public static void showError(String message, BackUrl back) {
         FXMLLoader fxmlLoader = createStage("error.fxml");
         ErrorController errorController = fxmlLoader.getController();
+        errorController.setBack(back);
         errorController.setErrorMessage(message);
         nullingLink();
     }
 
-    public static void showLogin() throws IOException {
+    public static void showLogin() {
         stage.close();
         createStage("login.fxml");
         nullingLink();
     }
 
-    private static FXMLLoader createStage(String fxml) throws IOException {
+    public static void showSignUp() {
+        stage.close();
+        createStage("signup.fxml");
+        nullingLink();
+    }
+
+    private static FXMLLoader createStage(String fxml) {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(fxml));
-        Scene scene = new Scene(fxmlLoader.load(), stage.getWidth() - 16, stage.getHeight() - 39);
+        Scene scene = null;
+        try {
+            scene = new Scene(fxmlLoader.load(), stage.getWidth() - 16, stage.getHeight() - 39);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         double x = stage.getX();
         double y = stage.getY();
         stage.setScene(scene);
@@ -110,13 +123,7 @@ public class Main extends Application {
         }
         if (!isServerConnected && user != null) {
             user = null;
-            Platform.runLater(() -> {
-                try {
-                    showLogin();
-                } catch (IOException e) {
-                    log.warn("Error while showing loginPage");
-                }
-            });
+            Platform.runLater(Main::showLogin);
             Thread.sleep(5000);
         }
     }

@@ -19,4 +19,7 @@
 	<Button fx:id="loginButton"
 	        text="Login"
 	        onAction="#loginButtonAction"/>
+	<Button fx:id="signUpButton"
+	        text="Sign up"
+	        onAction="#signUpButtonAction"/>
 </VBox>

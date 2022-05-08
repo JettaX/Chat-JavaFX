@@ -15,9 +15,8 @@ import rocket_chat.entity.User;
 import rocket_chat.repository.UserRepository;
 import rocket_chat.util.TcpConnection;
 import rocket_chat.view.BackButton;
+import rocket_chat.view.utils.BackUrl;
 import rocket_chat.view.utils.RoundPicture;
-
-import java.io.IOException;
 
 public class SettingsController {
     private UserRepository userRepository;
@@ -63,7 +62,7 @@ public class SettingsController {
     }
 
     private void generateTitle() {
-        Button button = new BackButton();
+        Button button = new BackButton(BackUrl.CHAT_LIST);
         titleBox.getChildren().add(button);
     }
 
@@ -90,11 +89,7 @@ public class SettingsController {
 
     public void mouseListener(MouseEvent mouseEvent) {
         if (mouseEvent.getButton().equals(MouseButton.BACK)) {
-            try {
-                Main.showChats(Main.user);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Main.showChats(Main.user);
         }
     }
 
@@ -144,12 +139,8 @@ public class SettingsController {
             Main.user = user;
             if (!userName.equals(oldUserName)) {
                 creatAlertAndShow("Your username has been changed. You must log in with your new username");
-                try {
-                    Main.exit();
-                    Main.showLogin();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                Main.exit();
+                Main.showLogin();
             }
         }
     }

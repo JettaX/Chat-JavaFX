@@ -12,6 +12,7 @@ import rocket_chat.network.TCPConnection;
 import rocket_chat.network.TCPConnectionListener;
 import rocket_chat.repository.*;
 import rocket_chat.util.TcpConnection;
+import rocket_chat.view.utils.BackUrl;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -114,12 +115,6 @@ public class TcpListener implements TCPConnectionListener {
     }
 
     private void showError(String message) {
-        Platform.runLater(() -> {
-            try {
-                Main.showError(message);
-            } catch (IOException e) {
-                log.warn(e.getMessage());
-            }
-        });
+        Platform.runLater(() -> Main.showError(message, BackUrl.LOGIN));
     }
 }

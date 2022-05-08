@@ -1,11 +1,12 @@
 package rocket_chat;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import lombok.extern.slf4j.Slf4j;
 import rocket_chat.dao.UserDaoJDBC;
-import rocket_chat.repository.*;
+import rocket_chat.repository.UserRepository;
 import rocket_chat.util.TcpConnection;
 
 @Slf4j
@@ -35,5 +36,9 @@ public class LoginController {
         } catch (NullPointerException e) {
             log.warn("Server is not connected");
         }
+    }
+
+    public void signUpButtonAction(ActionEvent actionEvent) {
+        Main.showSignUp();
     }
 }

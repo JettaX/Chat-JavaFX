@@ -23,8 +23,8 @@ import rocket_chat.util.TcpConnection;
 import rocket_chat.validation.Validator;
 import rocket_chat.view.BackButton;
 import rocket_chat.view.LabelMessageNotSent;
+import rocket_chat.view.utils.BackUrl;
 
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
@@ -56,7 +56,7 @@ public class ChatController {
     }
 
     public void generateTitle() {
-        Button backButton = new BackButton();
+        Button backButton = new BackButton(BackUrl.CHAT_LIST);
         titleWrapper.getChildren().add(backButton);
 
         Label title = new Label(chat.getFriendUser().getFirstName() + " " + chat.getFriendUser().getLastName());
@@ -162,11 +162,7 @@ public class ChatController {
 
     public void mouseListener(MouseEvent mouseEvent) {
         if (mouseEvent.getButton().equals(MouseButton.BACK)) {
-            try {
-                Main.showChats(Main.user);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Main.showChats(Main.user);
         }
     }
 }

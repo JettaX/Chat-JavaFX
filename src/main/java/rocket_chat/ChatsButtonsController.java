@@ -20,7 +20,6 @@ import rocket_chat.repository.UserRepository;
 import rocket_chat.validation.Validator;
 import rocket_chat.view.ChatsButton;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -77,13 +76,7 @@ public class ChatsButtonsController {
                                 throw new RuntimeException(e);
                             }
                         }
-                        Platform.runLater(() -> {
-                            try {
-                                Main.showChat(chat1);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
+                        Platform.runLater(() -> Main.showChat(chat1));
                     });
                     thread.start();
                 });
@@ -126,22 +119,14 @@ public class ChatsButtonsController {
         chatButton.getStyleClass().add("chatButtonWithUser");
         HBox.setHgrow(chatButton, javafx.scene.layout.Priority.ALWAYS);
         chatButton.setOnAction(event -> {
-            try {
-                Main.showChat(new Chat(Main.user, user));
-                isLoadSearch = true;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Main.showChat(new Chat(Main.user, user));
+            isLoadSearch = true;
         });
         hBox.getChildren().add(chatButton);
         chatsWrapper.getChildren().add(hBox);
     }
 
     public void settingsButtonListener(ActionEvent actionEvent) {
-        try {
-            Main.showSettings();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Main.showSettings();
     }
 }
