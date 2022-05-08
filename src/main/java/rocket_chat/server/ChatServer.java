@@ -6,13 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import rocket_chat.dao.ChatDaoJDBC;
 import rocket_chat.dao.UserDaoJDBC;
 import rocket_chat.dao.UserSecureDaoJDBC;
-import rocket_chat.entity.Chat;
 import rocket_chat.entity.Message;
 import rocket_chat.entity.User;
 import rocket_chat.entity.UserSecure;
 import rocket_chat.network.TCPConnection;
 import rocket_chat.network.TCPConnectionListener;
-import rocket_chat.repository.*;
+import rocket_chat.repository.ChatRepository;
+import rocket_chat.repository.UserRepository;
+import rocket_chat.repository.UserSecureRepository;
 import rocket_chat.util.JdbcConnection;
 
 import java.io.IOException;
@@ -184,38 +185,5 @@ public class ChatServer implements TCPConnectionListener {
         User userFour = userRepository.saveUser(new User("Jonson@Lol", "Jon", "Ar"));
         User userFive = userRepository.saveUser(new User("KittyClair", "Karen", "Clair"));
         User userSix = userRepository.saveUser(new User("KekLol", "Sara", "Bond"));
-
-        Chat chatWithOne = chatRepository.saveChat(new Chat(mainUser, userOne));
-        Chat chatWithTwo = chatRepository.saveChat(new Chat(mainUser, userTwo));
-
-        Chat chatWithThree = chatRepository.saveChat(new Chat(userOne, mainUser));
-        Chat chatWithFour = chatRepository.saveChat(new Chat(userOne, userThree));
-
-
-        Message message1 = new Message(chatWithOne, userOne, mainUser, "Hi");
-        Message message2 = new Message(chatWithOne, mainUser, userOne, "Lol");
-        Message message3 = new Message(chatWithOne, userOne, mainUser, "Bye");
-        Message message4 = new Message(chatWithOne, mainUser, userOne, "Kek");
-        Message message5 = new Message(chatWithOne, userOne, mainUser, "Chill");
-        Message message6 = new Message(chatWithTwo, userTwo, mainUser, "Sleep");
-        Message message7 = new Message(chatWithTwo, mainUser, userTwo, "Go");
-        Message message8 = new Message(chatWithTwo, userTwo, mainUser, "Work");
-        Message message9 = new Message(chatWithTwo, mainUser, userTwo, "Dance");
-        Message message11 = new Message(chatWithTwo, mainUser, userTwo, "Конструктор поля JFormattedTextField в " + "качестве параметра" + " " + "получает форматирующий объект, унаследованный от абстрактного внутреннего класса AbstractFormatter. Когда в форматированное текстовое поле вводятся символы, то сразу же вызывается форматирующий объект, в задачу которого входит анализ введенного значения и принятие решения о соответствии этого значения некоторому формату. Основными составляющими форматирующего объекта являются фильтр документа DocumentFilter, который принимает решение, разрешать или нет очередное изменение в документе, а также навигационный фильтр NavigationFilter. Навигационный фильтр получает исчерпывающую информацию о перемещениях курсора в текстовом поле и способен запрещать курсору появляться в некоторых областях поля (таких как разделители номеров, дат и других данных, которые не должны редактироваться). Форматирующий объект также отвеачет за действие, которое предпринимается в случае ввода пользователем неверного значения (по умолчанию раздается звуковой сигнал).");
-        Message message10 = new Message(chatWithTwo, userTwo, mainUser, "Out");
-
-        chatWithOne.addMessage(message1);
-        chatWithOne.addMessage(message2);
-        chatWithOne.addMessage(message3);
-        chatWithOne.addMessage(message4);
-        chatWithOne.addMessage(message5);
-
-
-        chatWithTwo.addMessage(message6);
-        chatWithTwo.addMessage(message7);
-        chatWithTwo.addMessage(message8);
-        chatWithTwo.addMessage(message9);
-        chatWithTwo.addMessage(message10);
-        chatWithTwo.addMessage(message11);
     }
 }
