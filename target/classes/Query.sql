@@ -22,14 +22,14 @@ create table user_secure
 create table chats
 (
     id             bigserial primary key,
-    owner_user_id  bigserial REFERENCES users (id),
-    friend_user_id bigserial REFERENCES users (id)
+    owner_user_id  bigserial REFERENCES users (id) ON DELETE CASCADE,
+    friend_user_id bigserial REFERENCES users (id) ON DELETE CASCADE
 );
 
 create table messages
 (
     id           bigserial primary key,
-    chat_id      bigserial REFERENCES chats (id),
+    chat_id      bigserial REFERENCES chats (id) ON DELETE CASCADE,
     user_from_id bigserial REFERENCES users (id),
     user_to_id   bigserial REFERENCES users (id),
     text         varchar   not null,

@@ -124,11 +124,13 @@ public class ChatDaoJDBC implements ChatRepository {
             User friendUser = userDaoJDBC.getUserByUserName(friendUserName);
             statement.setLong(1, ownerUser.getId());
             statement.setLong(2, friendUser.getId());
-            if (statement.executeUpdate() > 0) {
-                messageDaoJDBC.deleteAllByChatId(getChatByOwnerIdAndFriendId(ownerUserName, friendUserName).getId());
-                return true;
-            }
-            return false;
+            messageDaoJDBC.deleteAllByChatId(getChatByOwnerIdAndFriendId(ownerUserName, friendUserName).getId());
+            statement.execute();
+            statement.setLong(1, friendUser.getId());
+            statement.setLong(2, ownerUser.getId());
+            messageDaoJDBC.deleteAllByChatId(getChatByOwnerIdAndFriendId(friendUserName, ownerUserName).getId());
+            statement.execute();
+            return true;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

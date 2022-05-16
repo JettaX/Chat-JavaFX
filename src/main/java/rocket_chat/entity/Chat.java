@@ -13,6 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder
+@ToString
 @AllArgsConstructor
 @Entity
 @Table(name = "chats")
@@ -28,6 +29,7 @@ public class Chat {
     private User friendUser;
     @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
+    @ToString.Exclude
     private List<Message> messages = new ArrayList<>();
 
     public Chat(User ownerUser, User friendUser) {

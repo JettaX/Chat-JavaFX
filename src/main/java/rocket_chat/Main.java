@@ -108,7 +108,7 @@ public class Main extends Application {
         createConnectionCheckerThread();
     }
 
-    public static void createConnectionCheckerThread() {
+    private static void createConnectionCheckerThread() {
         thread = connectionCheckerThread();
         thread.start();
     }
