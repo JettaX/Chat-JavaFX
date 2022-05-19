@@ -19,6 +19,7 @@ import rocket_chat.dao.ChatDaoJDBC;
 import rocket_chat.entity.Chat;
 import rocket_chat.entity.Message;
 import rocket_chat.repository.ChatRepository;
+import rocket_chat.util.HistoryUtil;
 import rocket_chat.util.TcpConnection;
 import rocket_chat.validation.Validator;
 import rocket_chat.view.BackButton;
@@ -111,6 +112,7 @@ public class ChatController {
             }
         }
         chat.addMessage(message);
+        HistoryUtil.saveMessage(Main.user.getUserName(), message);
 
         HBox messageWrapper = new HBox();
         messageWrapper.getStyleClass().add("messageWrapper");

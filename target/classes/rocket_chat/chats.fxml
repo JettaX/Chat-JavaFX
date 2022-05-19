@@ -16,6 +16,7 @@
 		<TextField fx:id="searchInput" onKeyPressed="#searchKeyListener" HBox.hgrow="ALWAYS"
 		           promptText="search"/>
 		<Button fx:id="settingsButton" onAction="#settingsButtonListener"/>
+		<Button fx:id="historyButton" onAction="#historyButtonListener"/>
 	</HBox>
 	<ScrollPane fx:id="scrollPaneForChats" cache="true" cacheHint="SPEED" fitToWidth="true" HBox.hgrow="ALWAYS"
 	            VBox.vgrow="ALWAYS">

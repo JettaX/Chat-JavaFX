@@ -56,6 +56,20 @@ public class Main extends Application {
         nullingLink();
     }
 
+    public static void showHistories() {
+        stage.close();
+        createStage("histories.fxml");
+        nullingLink();
+    }
+
+    public static void showHistory(String friendUserName) {
+        stage.close();
+        FXMLLoader fxmlLoader = createStage("history.fxml");
+        HistoryController historyController = fxmlLoader.getController();
+        historyController.initializer(friendUserName);
+        nullingLink();
+    }
+
     public static void showSettings() {
         stage.close();
         createStage("settings.fxml");

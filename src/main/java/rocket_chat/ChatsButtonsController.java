@@ -30,6 +30,8 @@ public class ChatsButtonsController {
     private UserRepository userRepository;
     private boolean isLoadSearch = false;
     @FXML
+    public Button historyButton;
+    @FXML
     public Button settingsButton;
     @FXML
     public VBox chatsWrapper;
@@ -41,9 +43,10 @@ public class ChatsButtonsController {
     public void initializer() {
         chatRepository = ChatDaoJDBC.getINSTANCE();
         userRepository = UserDaoJDBC.getINSTANCE();
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon/settings.png")),
-                40, 40, true, true);
-        settingsButton.setGraphic(new javafx.scene.image.ImageView(image));
+        settingsButton.setGraphic(new javafx.scene.image.ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon/settings.png")),
+                35, 35, true, true)));
+        historyButton.setGraphic(new javafx.scene.image.ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon/history.png")),
+                35, 35, true, true)));
         addChats();
         searchInput.addEventHandler(Event.ANY, event ->
         {
@@ -128,5 +131,9 @@ public class ChatsButtonsController {
 
     public void settingsButtonListener(ActionEvent actionEvent) {
         Main.showSettings();
+    }
+
+    public void historyButtonListener(ActionEvent actionEvent) {
+        Main.showHistories();
     }
 }

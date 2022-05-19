@@ -1,0 +1,2 @@
+admin->hi
+admin->asd

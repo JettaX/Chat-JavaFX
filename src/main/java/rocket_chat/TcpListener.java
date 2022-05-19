@@ -11,6 +11,7 @@ import rocket_chat.entity.Message;
 import rocket_chat.network.TCPConnection;
 import rocket_chat.network.TCPConnectionListener;
 import rocket_chat.repository.*;
+import rocket_chat.util.HistoryUtil;
 import rocket_chat.util.TcpConnection;
 import rocket_chat.view.utils.BackUrl;
 
@@ -52,6 +53,7 @@ public class TcpListener implements TCPConnectionListener {
             }
             Chat chat = chatRepository.getChatByOwnerIdAndFriendId(mess.getUserTo().getUserName(), mess.getUserFrom().getUserName());
             chat.addMessage(mess);
+            HistoryUtil.saveMessage(Main.user.getUserName(), mess);
         }
     }
 
