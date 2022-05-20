@@ -13,5 +13,7 @@
       onMouseClicked="#mouseListener"
       stylesheets="@styles/common.css, @styles/histories.css">
 	<HBox fx:id="titleBox"/>
-	<VBox fx:id="chatsList" VBox.vgrow="ALWAYS"/>
+	<ScrollPane cache="true" cacheHint="SPEED" fitToWidth="true" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+		<VBox fx:id="chatsList" VBox.vgrow="ALWAYS"/>
+	</ScrollPane>
 </VBox>
