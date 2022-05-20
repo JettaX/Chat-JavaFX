@@ -10,6 +10,7 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileUtil {
+    private static final int MAX_HISTORY_SIZE = 100;
 
     public static void writeFile(String path, String fileName, String content) {
         try {
@@ -22,10 +23,7 @@ public class FileUtil {
             if (isFilled(path, fileName)) {
                 removeFirsLine(path, fileName);
             }
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(createFile, true))) {
-                writer.write(content);
-                writer.flush();
-            }
+            writeToFile(createFile, content);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -57,7 +55,7 @@ public class FileUtil {
 
     private static boolean isFilled(String path, String fileName) {
         try (BufferedReader reader = new BufferedReader(new FileReader(new File(path, fileName)))) {
-            return reader.lines().count() >= 100;
+            return reader.lines().count() >= MAX_HISTORY_SIZE;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -82,6 +80,15 @@ public class FileUtil {
             e.printStackTrace();
         }
         file.delete();
-        list.forEach(line -> writeFile(path, fileName, line.concat("\n")));
+        list.forEach(line -> writeToFile(new File(path, fileName), line.concat("\n")));
+    }
+
+    private static void writeToFile(File file, String content) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+            writer.write(content);
+            writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

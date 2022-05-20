@@ -1,0 +1,5 @@
+admin->kek
+admin->lol
+admin->check
+admin->hui
+admin->pep
