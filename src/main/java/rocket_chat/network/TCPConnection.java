@@ -3,21 +3,24 @@ package rocket_chat.network;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TCPConnection {
     private final Socket socket;
-    private final Thread thread;
     private Thread threadTimeout;
     private final TCPConnectionListener eventListener;
     private BufferedReader in;
     private BufferedWriter out;
 
+    private ExecutorService executorService = Executors.newFixedThreadPool(5);
+
     public TCPConnection(TCPConnectionListener eventListener, String ip, int port) throws IOException {
         this.socket = new Socket(ip, port);
         this.eventListener = eventListener;
         initializer(socket);
-        thread = new Thread(new Runnable() {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 String login = "";
@@ -33,7 +36,7 @@ public class TCPConnection {
                     login = in.readLine();
                     eventListener.onAuthSuccess(TCPConnection.this, login);
                     eventListener.onConnected(TCPConnection.this, login);
-                    while (!thread.isInterrupted()) {
+                    while (!executorService.isShutdown()) {
                         eventListener.onReceiveMessage(TCPConnection.this, in.readLine());
                     }
                 } catch (
@@ -44,14 +47,13 @@ public class TCPConnection {
                 }
             }
         });
-        thread.start();
     }
 
     public TCPConnection(Socket socket, TCPConnectionListener eventListener) throws IOException {
         this.socket = socket;
         this.eventListener = eventListener;
         initializer(socket);
-        thread = new Thread(new Runnable() {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 String login = null;
@@ -75,7 +77,7 @@ public class TCPConnection {
                     });
                     threadTimeout.start();
 
-                    while (!thread.isInterrupted()) {
+                    while (!executorService.isShutdown()) {
                         try {
                             login = in.readLine();
                             eventListener.onAttemptAuth(TCPConnection.this, login);
@@ -93,7 +95,7 @@ public class TCPConnection {
                         eventListener.onConnected(TCPConnection.this, login);
                         break;
                     }
-                    while (!thread.isInterrupted()) {
+                    while (!executorService.isShutdown()) {
                         eventListener.onReceiveMessage(TCPConnection.this, in.readLine());
                     }
                 } catch (
@@ -104,7 +106,6 @@ public class TCPConnection {
                 }
             }
         });
-        thread.start();
     }
 
     private void initializer(Socket socket) throws IOException {
@@ -139,7 +140,7 @@ public class TCPConnection {
     }
 
     public synchronized void disconnect() {
-        thread.interrupt();
+        executorService.shutdown();
         if (threadTimeout != null) {
             threadTimeout.interrupt();
         }
